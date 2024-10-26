@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+databases[postgresql]
+pydantic
+bcrypt
+python-jose
+aiortc
+websockets
