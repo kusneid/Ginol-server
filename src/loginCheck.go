@@ -26,7 +26,7 @@ func InitDB() {
 }
 
 func LoginCheck(c *user.Credentials) (bool, error) {
-	InitDB()
+	//InitDB()
 	var creds user.Credentials
 
 	if err := db.Where("username = ?", c.Username).First(&creds).Error; err != nil {

@@ -19,6 +19,8 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
+	src.InitDB()
+
 	r.POST("/api/loginServerHandler", func(c *gin.Context) {
 
 		var creds user.Credentials
@@ -36,7 +38,17 @@ func main() {
 			c.JSON(http.StatusUnauthorized, gin.H{"bool": "false"})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"bool": "true"})
+		c.JSON(http.StatusOK, gin.H{"bool": "true", "nickname": creds.Username})
+	})
+
+	r.POST("/api/loginRegistrationHandler", func(c *gin.Context) {
+		var creds user.Credentials
+		if err := c.ShouldBindJSON(&creds); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+			return
+		}
+		src.RegHandler(&creds)
+		c.JSON(http.StatusOK, gin.H{"bool": "true", "nickname": creds.Username})
 	})
 
 	r.Run(":2737")
