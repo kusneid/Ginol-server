@@ -41,7 +41,13 @@ func main() {
 			c.JSON(http.StatusUnauthorized, gin.H{"bool": "false"})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"bool": "true"})
+
+		token := src.GenerateToken()
+
+		src.StoreToken(token, creds.Username)
+
+		c.JSON(http.StatusOK, gin.H{"bool": "true", "username": creds.Username, "token": token})
+
 	})
 
 	r.POST("/api/registrationServerHandler", func(c *gin.Context) {
@@ -51,7 +57,12 @@ func main() {
 			return
 		}
 		src.RegHandler(&creds)
-		c.JSON(http.StatusOK, gin.H{"bool": "true"})
+
+		token := src.GenerateToken()
+
+		src.StoreToken(token, creds.Username)
+
+		c.JSON(http.StatusOK, gin.H{"bool": "true", "username": creds.Username, "token": token})
 	})
 
 	r.Run(":2737")
