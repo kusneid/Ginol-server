@@ -65,5 +65,26 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"bool": "true", "username": creds.Username, "token": token})
 	})
 
+	r.POST("/api/check-nickname-server", func(c *gin.Context) {
+		var nick string
+		if err := c.ShouldBindJSON(&nick); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
+			return
+		}
+
+		exist, err := src.NicknameExists(nick)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Nickname can't be searched"})
+			return
+		}
+		if exist {
+			c.JSON(http.StatusBadRequest, gin.H{"exists": true})
+		}
+		if !exist {
+			c.JSON(http.StatusBadRequest, gin.H{"exists": false})
+		}
+
+	})
+
 	r.Run(":2737")
 }
