@@ -1,6 +1,7 @@
 package src
 
 import (
+	"errors"
 	"log"
 	"os"
 
@@ -25,8 +26,19 @@ func InitDB() {
 	}
 }
 
+func NicknameExists(nickname string) (bool, error) {
+	var user user.User
+	result := db.Where("nickname = ?", nickname).First(&user)
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, result.Error
+	}
+	return true, nil
+}
+
 func LoginCheck(c *user.Credentials) (bool, error) {
-	//InitDB()
 	var creds user.Credentials
 
 	if err := db.Where("username = ?", c.Username).First(&creds).Error; err != nil {
