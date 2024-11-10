@@ -34,7 +34,6 @@ func GetUsernameByToken(token string) (string, bool) {
 func UsernameExists(substring string) (bool, error) {
 	var usr user.User
 
-	// Используем ILIKE для нечувствительного к регистру частичного совпадения в PostgreSQL
 	result := db.Where("username = ?", substring).First(&usr)
 
 	if result.Error != nil {
