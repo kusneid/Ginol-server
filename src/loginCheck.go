@@ -25,18 +25,20 @@ func InitDB() {
 	}
 }
 
-func LoginCheck(c *user.Credentials) error {
+func LoginCheck(c *user.Credentials) (bool, error) {
 	InitDB()
 	var creds user.Credentials
 
 	if err := db.Where("username = ?", c.Username).First(&creds).Error; err != nil {
-		return err
+		log.Println("can't find user")
+		return false, err
 	}
 
-	if err := VerifyPassword(&creds, c.Password); err == nil {
-		return err
+	if err := VerifyPassword(&creds, c.Password); err != nil {
+		log.Println("password incorrect")
+		return false, err
 	}
 
-	return nil
+	return true, nil
 
 }

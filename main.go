@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -14,6 +13,8 @@ import (
 func main() {
 	r := gin.Default()
 
+	log.SetFlags(log.Ltime | log.Lshortfile)
+
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
@@ -25,11 +26,17 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 			return
 		}
-		fmt.Print(creds.Username, creds.Password)
-		if err := src.LoginCheck(&creds); err != nil {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication failed", "detail": err.Error()})
+		authenticated, err := src.LoginCheck(&creds)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"bool": "false"})
 			return
 		}
+
+		if !authenticated {
+			c.JSON(http.StatusUnauthorized, gin.H{"bool": "false"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"bool": "true"})
 	})
 
 	r.Run(":2737")
