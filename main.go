@@ -66,19 +66,18 @@ func main() {
 	})
 
 	r.POST("/api/check-nickname-server", func(c *gin.Context) {
-		var nick string
-		if err := c.ShouldBindJSON(&nick); err != nil {
+		var union src.Answer
+		if err := c.ShouldBindJSON(&union); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid data"})
 			return
 		}
-
-		exist, err := src.NicknameExists(nick)
+		exist, err := src.NicknameExists(union.FriendNickname)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Nickname can't be searched"})
 			return
 		}
 		if exist {
-			c.JSON(http.StatusBadRequest, gin.H{"exists": true})
+			c.JSON(http.StatusOK, gin.H{"exists": true})
 		}
 		if !exist {
 			c.JSON(http.StatusBadRequest, gin.H{"exists": false})

@@ -26,9 +26,14 @@ func InitDB() {
 	}
 }
 
+type Answer struct {
+	LoggedUser     string `json:"loggedUser"`
+	FriendNickname string `json:"friendNickname"`
+}
+
 func NicknameExists(nickname string) (bool, error) {
 	var user user.User
-	result := db.Where("nickname = ?", nickname).First(&user)
+	result := db.Where("username = ?", nickname).First(&user)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			return false, nil
